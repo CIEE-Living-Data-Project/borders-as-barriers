@@ -1,0 +1,76 @@
+---
+title: "Spatial data tutorial"
+author: "Sam Straus"
+date: "10/11/2022"
+output: html_document
+---
+
+Install and load R packages.
+
+```{r install_packages}
+# install.packages(c("raster", "sf", "sp", "rgdal", "ggplot2", "ggspatial", "rnaturalearth", "wesanderson"))
+```
+
+```{r load_packages, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
+library(raster) ## for using raster data
+library(sf) ## simple features "sf" for spatial data
+library(sp) ## for using spatial data
+library(rgdal) ## for using spatial data. Note: will be deprecated end of 2023
+library(ggplot2) ## for plotting 
+library(ggspatial) ## plot maps using ggplot
+library(rnaturalearth) ##
+library(wesanderson) ## a fun colour palette
+```
+
+First, we need to read in our data. We are using raster data of the Canada and USA outlines as the reference CRS (Coordinate refence system). We have shapefiles for our study area and transect segments.
+
+```{r read_plot, echo = TRUE, results = "hide", warning = FALSE}
+canusa <- raster("data/USCanadaOutline.tif")
+crs(canusa)
+plot(canusa)
+
+study <- st_read("data/WBI shapefile/WBI Study Area.shp")
+plot(study)
+
+segments <- st_read("data/WBPHS shapefile/MAS_segments.shp")
+plot(segments)
+```
+
+Next we will set the crs of the western boreal forests shapefile to be the same as the `canusa` object we created above.
+
+```{r set_crs, warning=FALSE}
+# set crs to be the same as canusa
+study_sp <- st_transform(study, crs = st_crs(canusa)) 
+plot(st_geometry(study_sp)) # to plot outline of study area
+```
+
+Let's plot a 500 km buffer around study area -- something we'll want to do later with our own data.
+
+```{r buffer}
+study_buf <- st_buffer(study_sp, dist = 500000) 
+plot(study_buf)
+
+rm(study) # we no longer need this object, remove from R environment
+```
+
+Convert segments to same crs, and crop segments to buffered study area. You can use can `st_crop()` BUT it only crops to the maximum extent of the buffered study area (crops to a rectangle); to crop to the actual polygon we use `st_intersection()`.
+
+```{r segments}
+# convert crs of segments to the same are canusa
+seg_sp <- st_transform(segments, crs(canusa)) 
+
+st_crs(seg_sp) == st_crs(study_buf) # make sure they have the same crs before cropping
+
+seg_crop <- st_intersection(seg_sp, study_buf) 
+plot(seg_crop)
+
+rm(segments, seg_sp) 
+```
+
+```{r plot_baseR, warning = FALSE}
+plot(canusa, ext = c(-5e+06, 5e+06, 5e+06, 4e+07), axes=F, box=F, legend = F)
+plot(study_buf, col= alpha("red", 0.5), border = "transparent", add = T)
+plot(study_sp, col = "grey", add = T)
+plot(seg_crop, col = "black", lwd = 0.5, add = T)
+title(main = "WBI survey area and smapling transects")
+```

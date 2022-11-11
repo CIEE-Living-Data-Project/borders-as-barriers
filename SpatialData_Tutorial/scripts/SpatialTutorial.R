@@ -36,12 +36,12 @@ plot(st_geometry(study_sp)) # to plot outline of study area
 study_buf <- st_buffer(study_sp, dist = 500000) 
 plot(study_buf)
 
-rm(study) # remove from our environment
+rm(study) # we no long need this object, remove from R environment
 
 
 ## Bring in survery transects ==============
 segments <- st_read("data/WBPHS shapefile/MAS_segments.shp")
-plot(segments)
+plot(segments) # what are we looking at here?
 
 # convert crs of segments to the same are canusa
 seg_sp <- st_transform(segments, crs(canusa)) 
