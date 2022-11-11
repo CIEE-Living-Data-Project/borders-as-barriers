@@ -5,6 +5,8 @@ date: "10/11/2022"
 output: html_document
 ---
 
+Here we will manipulate and plot data from the the Waterfowl Breeding Population and Habitat Survey (WBPHS). You can get more information about WBPHS from [here](https://www.canada.ca/en/environment-climate-change/services/bird-surveys/waterfowl/breeding-population-habitat-survey.html) and download the data [here](https://www.fws.gov/project/waterfowl-breeding-population-and-habitat-survey).
+
 Install and load R packages.
 
 ```{r install_packages}
@@ -12,14 +14,13 @@ Install and load R packages.
 ```
 
 ```{r load_packages, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
+library(dplyr) ## for data manipulation
 library(raster) ## for using raster data
 library(sf) ## simple features "sf" for spatial data
 library(sp) ## for using spatial data
-library(rgdal) ## for using spatial data. Note: will be deprecated end of 2023
 library(ggplot2) ## for plotting 
 library(ggspatial) ## plot maps using ggplot
 library(rnaturalearth) ##
-library(wesanderson) ## a fun colour palette
 ```
 
 First, we need to read in our data. We are using raster data of the Canada and USA outlines as the reference CRS (Coordinate refence system). We have shapefiles for our study area and transect segments.
@@ -33,8 +34,14 @@ study <- st_read("data/WBI shapefile/WBI Study Area.shp")
 plot(study)
 
 segments <- st_read("data/WBPHS shapefile/MAS_segments.shp")
+segments <- segments %>%
+  dplyr::select(stratum) 
 plot(segments)
 ```
+
+So we've plotted our based raster of Canada & US, the western boreal forest polygon and the WBPHS aerial survey transects (segments). We only really need the geometry of each segment, but to see what the segments look like we just plotted the *stratums*, which are the different survey plots used by WBPHS.
+
+Here we plotted all the WBPHS aerial survey transects.
 
 Next we will set the crs of the western boreal forests shapefile to be the same as the `canusa` object we created above.
 
@@ -67,10 +74,65 @@ plot(seg_crop)
 rm(segments, seg_sp) 
 ```
 
+Let's plot everything together using base R.
+
 ```{r plot_baseR, warning = FALSE}
 plot(canusa, ext = c(-5e+06, 5e+06, 5e+06, 4e+07), axes=F, box=F, legend = F)
 plot(study_buf, col= alpha("red", 0.5), border = "transparent", add = T)
 plot(study_sp, col = "grey", add = T)
 plot(seg_crop, col = "black", lwd = 0.5, add = T)
 title(main = "WBI survey area and smapling transects")
+```
+
+This is nice but we can do better. Lets plot the same map using ggplot.
+
+First we need to make the study area, buffered area and transects into sf (it's easier to work with in ggplot).
+
+```{r makeSpatial, warning = FALSE}
+
+# study area
+study_sp2 <- st_as_sf(study_sp)
+# buffered study area
+study_buf2 <- st_as_sf(study_buf)
+# cropped segments
+seg_crop2 <- st_as_sf(seg_crop)
+```
+
+Next, we get the base map from *rnaturalearth* and filter and zoom in on Canada.
+
+```{r get_worldMap, warning = F}
+  
+# Get a shapefile of all countries from the rnaturalearth package
+world <- ne_countries(scale = "medium",
+                      returnclass = "sf")
+# filter for the countries you want for your plot
+world <- world %>% 
+  subset(continent == "North America",
+         adm0_a3 == "CAN" | adm0_a3 == "USA")
+# change crs to be the same as the study area, buffered study area and segments
+world <- st_transform(world, crs(study_sp2))
+# set bounding box the zoom in on North America, you can play around with these numbers to zoom in or out
+box <- c(xmin = -3717148, xmax = 2558043.4, ymin = 5886034, ymax = 11860535.3)
+# crop world shpaefile to your bouding box
+world <- st_crop(world, box)
+```
+
+```{r plot_ggplot, warning = F}
+# plot!
+ggplot() +
+  geom_sf(data = world, aes(geometry = geometry), fill = "yellowgreen", size =0.5) +
+  geom_sf(data = study_buf2,
+          aes(geometry = geometry),
+          fill = "grey90", alpha = 0.75, color = "grey55") +
+  geom_sf(data = study_sp2, aes(geometry = geometry), show.legend = F,
+          fill = "red", alpha = 0.2) +
+  geom_sf(data = seg_crop2,aes(geometry = geometry), 
+          show.legend =  F) +
+  annotation_scale(location = "br", width_hint = 0.3, pad_x = unit(2.5, "cm")) +
+  annotation_north_arrow(which_north = "true", location = "br", width = unit(0.95, "cm"),
+                         pad_x = unit(0.2, "cm")) +
+  ggthemes::theme_map() +
+  labs(title = "WBI survey area and smapling transects") +
+  theme(plot.title = element_text(size = 20, face = "bold"))
+
 ```
