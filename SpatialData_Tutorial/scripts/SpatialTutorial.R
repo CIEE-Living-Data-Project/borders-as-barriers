@@ -10,9 +10,7 @@
 library(sf)
 library(sp) 
 library(raster)
-library(rgdal)
 library(ggspatial)
-library(wesanderson)
 library(ggplot2)
 
 

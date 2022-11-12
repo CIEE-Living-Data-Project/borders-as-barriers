@@ -170,13 +170,14 @@ pre code {
 
 
 <p>Install and load R packages.</p>
-<pre class="r"><code># install.packages(c(&quot;raster&quot;, &quot;sf&quot;, &quot;sp&quot;, &quot;rgdal&quot;, &quot;ggplot2&quot;, &quot;ggspatial&quot;, &quot;wesanderson&quot;))</code></pre>
+<pre class="r"><code># install.packages(c(&quot;raster&quot;, &quot;sf&quot;, &quot;sp&quot;, &quot;rgdal&quot;, &quot;ggplot2&quot;, &quot;ggspatial&quot;, &quot;rnaturalearth&quot;, &quot;wesanderson&quot;))</code></pre>
 <pre class="r"><code>library(raster) ## for using raster data
 library(sf) ## simple features &quot;sf&quot; for spatial data
 library(sp) ## for using spatial data
 library(rgdal) ## for using spatial data. Note: will be deprecated end of 2023
 library(ggplot2) ## for plotting 
 library(ggspatial) ## plot maps using ggplot
+library(rnaturalearth) ##
 library(wesanderson) ## a fun colour palette</code></pre>
 <p>First, we need to read in our data. We are using raster data of the Canada and USA outlines as the reference CRS (Coordinate refence system). We have shapefiles for our study area and transect segments.</p>
 <pre class="r"><code>canusa &lt;- raster(&quot;data/USCanadaOutline.tif&quot;)

@@ -15,11 +15,9 @@ Install and load R packages.
 library(raster) ## for using raster data
 library(sf) ## simple features "sf" for spatial data
 library(sp) ## for using spatial data
-library(rgdal) ## for using spatial data. Note: will be deprecated end of 2023
 library(ggplot2) ## for plotting 
 library(ggspatial) ## plot maps using ggplot
 library(rnaturalearth) ##
-library(wesanderson) ## a fun colour palette
 ```
 
 First, we need to read in our data. We are using raster data of the Canada and USA outlines as the reference CRS (Coordinate refence system). We have shapefiles for our study area and transect segments.
