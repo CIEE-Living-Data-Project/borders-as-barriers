@@ -29,13 +29,13 @@ There are two types of climate velocities, each having slightly different meanin
 
 Below we will discuss each in detail, calculating them as we go and discussing their ecological meanings and exploring their limitations.
 
-#### 1. Gradient-based climate velocities
+### 1. Gradient-based climate velocities
 
-Gradient-based climate velocities (gVoCC) are a way to describe the propensity of a species to move in response to climate change. They reprenst the ratio between the long-term temporal trend in climate conditions by the spatial gradient in climate conditions:
+Gradient-based climate velocities (gVoCC) are a way to describe the propensity of a species to move in response to climate change. They represent the ratio between the long-term temporal trend in climate conditions by the spatial gradient in climate conditions:
 
 **gVoCC = long-term trend / spatial gradient**
 
-A high gVoCC indicates that a species in that location would have a high propensity to move in response to climate change. When the gVoCC is high, it indicates that the climate is changing quickly over time relative to the amount of spatial variation in climate. High gVoCCs tend to occur in areas with heterogeneous climates that are experiencing high rates of temporal change, such as deserts. In areas with high gVoCCs, an organism would have to shift quickly and move far in order to reach an analgous climate.
+A high gVoCC indicates that a species in that location would have a high propensity to move in response to climate change. When the gVoCC is high, it indicates that the climate is changing quickly over time relative to the amount of spatial variation in climate. High gVoCCs tend to occur in areas with heterogeneous climates that are experiencing high rates of temporal change, such as deserts. In areas with high gVoCCs, an organism would have to shift quickly and move far in order to reach an analogous climate.
 
 On the other hand, a low gVoCC indicates that a species in that location would have a high propensity to move in response to climate change. In these areas, the climate is changing slowly relative to the amount of spatial variation in climate conditions. Areas like mountainous regions, where spatial variation in climates is high, tend to have low gVoCCs. In these areas, on organism would be less inclined to move quickly because a similar climate is closer by.
 
@@ -66,7 +66,7 @@ plot(ttrend)
 
 ```
 
-You can see here that the temporal trends (slope of the regressions, slpTrends) show that the climate has warmed faster towards the poles.
+You can see here that the temporal trends (slope of the regressions, `slpTrends`) show that the climate has warmed faster towards the poles.
 
 Next, we need to calculate the spatial temperature gradient. This is done using the `spatialGrad` function. To use this function, we need to collapse our raster stack into a stack of annual temperature values for each year. I did this for you because it takes a while, so all we have to do is read in the raster:
 
@@ -185,7 +185,7 @@ sp_cropped %>%
 
 ```
 
-#### 2. Distanced-based climate velocities
+### 2. Distanced-based climate velocities
 
 Distanced-based climate velocities (dVoCC) identify local environments that have future climatic conditions analogous to the baseline conditions at a location of interest, and then estimate the distance and direction between the location of interest and its future analogue. They are calculated as the geographical distance to the closest climate analogue for divided by the time elapsed between baseline and future periods:
 
@@ -230,7 +230,7 @@ r[dvocc$focal] <- dvocc$vel
 plot(r)
 ```
 
-Let's try making the analgoue threshold location-specific. To do this, we need to add a third column describing the threshold for each cell and change the `method` argument to `"Variable"`. In this case, we can use the standard deviation of precipitation:
+Let's try making the analogue threshold location-specific. To do this, we need to add a third column describing the threshold for each cell and change the `method` argument to `"Variable"`. In this case, we can use the standard deviation of precipitation:
 
 ```{r calc_dVoCC_thresh, echo = TRUE}
 
