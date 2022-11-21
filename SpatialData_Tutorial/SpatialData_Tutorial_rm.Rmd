@@ -1,6 +1,6 @@
 ---
 title: "Spatial data tutorial"
-author: "Sam Straus"
+author: "Andrea Brown & Sam Straus"
 date: "10/11/2022"
 output: html_document
 ---

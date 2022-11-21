@@ -12,12 +12,9 @@ library(terra)
 library(beepr)
 library(RColorBrewer)
 
-#set directory to files
-setwd("/Users/isaaceckert/Library/CloudStorage/OneDrive-SharedLibraries-McGillUniversity/Laura Pollock, Dr. - Predictions5km/ModelDataCode/")
-
 #Load in Data
 #Raster Outline
-canusa <- raster("USCanadaOutline.tif")
+canusa <- raster("data/USCanadaOutline.tif")
 plot(canusa)
 crs(canusa)
 
@@ -131,7 +128,7 @@ make.SDMs<-function(species){
 make.SDMs("Lupinus perennis") #make models only for this species
 
 #Function to predict to Canada + USA at 1km (might take a while!)
-#Start by making 2 CURRENT girds to predict on (based on sample effort)
+#Start by making 2 CURRENT grids to predict on (based on sample effort)
 
 #Pred grids no sample effort
 all.preds.no.effort <- envval[,c(1:5,7:8,10:13)] #effort and footprint removed

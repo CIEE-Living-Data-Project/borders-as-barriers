@@ -1,0 +1,49 @@
+---
+title: "Borders_SDM_Tutorial"
+author: "Isaac Eckert & Sam Straus"
+date: "11/11/2022"
+output: html_document
+---
+
+Install and load R packages.
+
+```{r load_packages, echo = TRUE, message = FALSE, warning = FALSE, results = "hide"}
+
+# install.packages(c("raster", "sf", "sp", "rgdal", "ggplot2", "ggspatial", "rnaturalearth", "wesanderson"))
+
+#data resolution = 1km
+
+library(raster) ## for using raster data
+library(dismo) # for SDM models
+library(gbm) # generalized boosted regression models
+library(mgcv) # mixed GAM computation vehicle
+library(terra) # spatial analysis with vector or raster data
+library(beepr) # play notification sound
+library(RColorBrewer) # color palette
+```
+
+Read in raster outline of study area
+
+```{r read_plot, echo = TRUE, results = "hide", warning = FALSE}
+canusa <- raster("data/USCanadaOutline.tif")
+plot(canusa)
+crs(canusa)
+```
+
+Create a stacked raster of climate predictors
+
+```{r}
+## below isn't working, trying to read objects in first
+
+library(readr)
+canusa_map <- read_file("data/EnvUsCan_MAP.tif")
+
+
+climate.preds<-stack(c("data/EnvUsCan_MAP.tif",    # Mean Annual Precipitation (mm)
+                       "data/EnvUsCan_DD_0.tif",   # degree-days below 0°C (chilling degree days)
+                       "data/EnvUsCan_PAS.tif",    # precipitation as snow (mm)
+                       "data/EnvUsCan_CMD.tif",    # Hargreave's climatic moisture index
+                       "data/EnvUsCan_DD18.tif"))  # degree-days below 18°C
+
+climate.preds
+```
