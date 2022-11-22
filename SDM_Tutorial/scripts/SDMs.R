@@ -7,7 +7,6 @@ library(raster)
 library(dismo)
 library(gbm)
 library(mgcv)
-library(raster)
 library(terra)
 library(beepr)
 library(RColorBrewer)
@@ -20,33 +19,33 @@ crs(canusa)
 
 ##Environmental Predictors
 #creates a stacked raster of the climate predictors
-climate.preds<-stack(c("EnvUsCan_MAP.tif",             # Mean Annual Precipitation (mm)
-                       "EnvUsCan_DD_0.tif",            # degree-days below 0°C (chilling degree days)
-                       "EnvUsCan_PAS.tif",             # precipitation as snow (mm)
-                       "EnvUsCan_CMD.tif",             # Hargreave's climatic moisture index
-                       "EnvUsCan_DD18.tif"))           # degree-days below 18°C
+climate.preds<-stack(c("data/EnvUsCan_MAP.tif",             # Mean Annual Precipitation (mm)
+                       "data/EnvUsCan_DD_0.tif",            # degree-days below 0°C (chilling degree days)
+                       "data/EnvUsCan_PAS.tif",             # precipitation as snow (mm)
+                       "data/EnvUsCan_CMD.tif",             # Hargreave's climatic moisture index
+                       "data/EnvUsCan_DD18.tif"))           # degree-days below 18°C
 
 climate.preds
 
 ##Other predictors
 #creates a stacked raster of the non-climate predictors
-other.preds<-stack(c("EnvUsCan_effort.tif",            # sampling effort
-                     "EnvUsCan_twi.tif",               # topographic wetness index
-                     "EnvUsCan_tri.tif",               # topographic ruggedness index
-                     "EnvUsCan_foot.tif",              # Human foot print
-                     "EnvUsCan_lcov.tif",              # Land cover classes
-                     "EnvUsCan_silt.tif",              # soil silt content
-                     "EnvUsCan_ph.tif",                # soil Ph
-                     "EnvUsCan_orgC.tif"))             # Organic Carbon
+other.preds<-stack(c("data/EnvUsCan_effort.tif",            # sampling effort
+                     "data/EnvUsCan_twi.tif",               # topographic wetness index
+                     "data/EnvUsCan_tri.tif",               # topographic ruggedness index
+                     "data/EnvUsCan_foot.tif",              # Human foot print
+                     "data/EnvUsCan_lcov.tif",              # Land cover classes
+                     "data/EnvUsCan_silt.tif",              # soil silt content
+                     "data/EnvUsCan_ph.tif",                # soil Ph
+                     "data/EnvUsCan_orgC.tif"))             # Organic Carbon
 other.preds
 
 #Stack all predictors
-all.preds <- stack(climate.preds,other.preds)
+all.preds <- stack(climate.preds, other.preds)
 
 #Set coordinate reference system (CRS)
 crs(all.preds) <- crs(canusa)
 
-#Round some layers to intergers 
+#Round some layers to integers 
 all.preds[[6]] <- round(all.preds[[6]],0)
 all.preds[[7]] <- round(all.preds[[7]],0)
 all.preds[[8]] <- round(all.preds[[8]],0)
@@ -65,10 +64,12 @@ rm(climate.preds,other.preds) #keep things tidy
 indx.abs <- sample(which(!is.na(envval[,1]) & !is.na(envval[,11])),8000) # sampling 8000 absence points
 
 #Select species to model from list of all species
-grep("Lupinus ",gsub(".gridpointsLCC.rds","",list.files("SpeciesData/")),value = T) 
+grep("Lupinus ",gsub(".gridpointsLCC.rds","",list.files("data/SpeciesData/")),value = T) 
 
 #Function to make SDMs and save them (this does not project, just fits)
 #Makes 3 models (GAM, BRT with effort, BRT without effort)
+
+## sam comment: why are we using these three models? why not just one? what kind of information are we getting from each?
 make.SDMs<-function(species){
   
   #set index
@@ -80,7 +81,7 @@ make.SDMs<-function(species){
   print(paste("Species=",s))
   
   #read in point data
-  pts <- readRDS(file=paste0("SpeciesData/",s,".gridpointsLCC.rds"))
+  pts <- readRDS(file=paste0("data/SpeciesData/",s,".gridpointsLCC.rds"))
   
   #rows?
   print(paste("Number of cells with presences=",nrow(pts)))
@@ -108,21 +109,21 @@ make.SDMs<-function(species){
                 data=dat, family=binomial(link="logit"))
   print("GAM=DONE")
   #save the GAM
-  saveRDS(GAM,file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/GAMs/",s,".GAM",".rds"))
+  saveRDS(GAM,file=paste0("Lupine_SDMs/Models/GAMs/",s,".GAM",".rds"))
   
   #run the BRT with effort  
   BRTe <- gbm.step(data=dat,gbm.x = 1:13,gbm.y = 14,family = "bernoulli",tree.complexity = 4,
                    learning.rate = 0.008,bag.fraction = 0.6)
   print("BRTe=DONE")
   #save it
-  saveRDS(BRTe,file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/BRTs/",s,".BRTe",".rds"))
+  saveRDS(BRTe,file=paste0("Lupine_SDMs/Models/BRTs/",s,".BRTe",".rds"))
   
   #run the BRT withOUT effort  
   BRT <- gbm.step(data=dat,gbm.x = c(1:5,7:8,10:13),gbm.y = 14,family = "bernoulli",tree.complexity = 5,
                    learning.rate = 0.008,bag.fraction = 0.6)
   print("BRT=DONE")
   #save it
-  saveRDS(BRT,file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/BRTs/",s,".BRT",".rds"))
+  saveRDS(BRT,file=paste0("Lupine_SDMs/Models/BRTs/",s,".BRT",".rds"))
   beep(2)
 }
 make.SDMs("Lupinus perennis") #make models only for this species
@@ -136,11 +137,23 @@ all.preds.no.effort <- envval[,c(1:5,7:8,10:13)] #effort and footprint removed
 #grids sample effort fixed at max
 all.preds.effort <- envval[,1:13]
 
+# Future climate data ------------------------------
+
 #We can also add future climate data to make predictions!
 #Lets use RCP 4.5 for 2080
-future.climate.preds<-stack(c("EnvUsCan_rcp45_2080_MAP.tif","EnvUsCan_rcp45_2080_DD_0.tif","EnvUsCan_rcp45_2080_PAS.tif","EnvUsCan_rcp45_2080_CMD.tif","EnvUsCan_rcp45_2080_DD18.tif")) #creates a stacked raster of the climate predictors
-other.preds<-stack(c("EnvUsCan_effort.tif","EnvUsCan_twi.tif","EnvUsCan_tri.tif","EnvUsCan_foot.tif",
-                     "EnvUsCan_lcov.tif","EnvUsCan_silt.tif","EnvUsCan_ph.tif","EnvUsCan_orgC.tif")) #creates a stacked raster of the non-climate predictors
+future.climate.preds<-stack(c("data/EnvUsCan_rcp45_2080_MAP.tif",
+                              "data/EnvUsCan_rcp45_2080_DD_0.tif",
+                              "data/EnvUsCan_rcp45_2080_PAS.tif",
+                              "data/EnvUsCan_rcp45_2080_CMD.tif",
+                              "data/EnvUsCan_rcp45_2080_DD18.tif")) #creates a stacked raster of the climate predictors
+other.preds<-stack(c("data/EnvUsCan_effort.tif",
+                     "data/EnvUsCan_twi.tif",
+                     "data/EnvUsCan_tri.tif",
+                     "data/EnvUsCan_foot.tif",
+                     "data/EnvUsCan_lcov.tif",
+                     "data/EnvUsCan_silt.tif",
+                     "data/EnvUsCan_ph.tif",
+                     "data/EnvUsCan_orgC.tif")) #creates a stacked raster of the non-climate predictors
 
 #Stack all predictors
 future.preds <- stack(future.climate.preds,other.preds)
@@ -149,6 +162,7 @@ remove(future.climate.preds,other.preds)
 crs(future.preds) <- crs(canusa)
 
 #Round some layers to intergers 
+# sam - same comment as before
 future.preds[[6]] <- round(future.preds[[6]],0)
 future.preds[[7]] <- round(future.preds[[7]],0)
 future.preds[[8]] <- round(future.preds[[8]],0)
@@ -176,7 +190,7 @@ predict.SDMs<-function(species,future){
   
   #PREDICT CURRENT
   #predict BRT with no sample effort 
-  BRT <- readRDS(file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/BRTs/",s,".BRT",".rds"))
+  BRT <- readRDS(file=paste0("Lupine_SDMs/Models/BRTs/",s,".BRT",".rds"))
   if (class(BRT)=="NULL") { 
     next 
   } #skip if doesnt exist
@@ -185,13 +199,13 @@ predict.SDMs<-function(species,future){
   print("Predict current BRT withOUT effort = DONE")
   
   # BRT WITH sample effort set to max
-  BRTe <- readRDS(file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/BRTs/",s,".BRTe",".rds"))
+  BRTe <- readRDS(file=paste0("Lupine_SDMs/Models/BRTs/",s,".BRTe",".rds"))
 
   brte.pred <- predict.gbm(BRTe, as.data.frame(all.preds.effort),n.trees=BRTe$gbm.call$best.trees, type="response")
   print("Predict current BRT WITH effort = DONE")
   
   #GAM WITH sample effort set to max
-  GAM <- readRDS(file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/GAMs/",s,".GAM",".rds"))
+  GAM <- readRDS(file=paste0("Lupine_SDMs/Models/GAMs/",s,".GAM",".rds"))
   gam.pred <- predict.gam(GAM,as.data.frame(all.preds.effort),type="response")
   print("Predict current GAM WITH effort = DONE")
   
@@ -209,7 +223,7 @@ predict.SDMs<-function(species,future){
     lst.a <- apply(lst,2,function(x) round(x,2)*100)
     
     #save as RDS
-    saveRDS(lst.a,file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/Predictions/",s,".1k",".rds"))
+    saveRDS(lst.a,file=paste0("Lupine_SDMs/Models/Predictions/",s,".1k",".rds"))
     
      
   }
@@ -224,7 +238,7 @@ predict.SDMs<-function(species,future){
     lst.a <- apply(lst,2,function(x) round(x,2)*100)
     
     #save as RDS
-    saveRDS(lst.a,file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/Predictions",s,".1k",".rds"))
+    saveRDS(lst.a,file=paste0("Lupine_SDMs/Models/Predictions",s,".1k",".rds"))
     
   }
 
@@ -233,13 +247,16 @@ predict.SDMs<-function(species,future){
 beep(2)
 
 } #this takes a LONG time (predicting at 1k)
+
+# sam - started at 3:45 PM, finished at 8:03 pm
+# we should make the output file available so they can just skip this step in the actual tutorial
 predict.SDMs("Lupinus perennis",future=T)
   
 #plot predictions 
 plot.SDM<-function(species){
 
   #read in data
-  data<-readRDS(paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/",species,".1k",".rds"))
+  data<-readRDS(paste0("Lupine_SDMs/Models/Predictions/",species,".1k",".rds"))
   class(data)
   
   #make NAs 0
@@ -283,7 +300,7 @@ plot.SDM("Lupinus perennis")
 plot.change<-function(species,threshold){
 
     #read in data
-  data<-readRDS(paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/Predictions/",species,".1k",".rds"))
+  data<-readRDS(paste0("Lupine_SDMs/Models/Predictions/",species,".1k",".rds"))
 
   #make NAs 0
   data[is.na(data)]<-0
@@ -360,14 +377,15 @@ plot.change("Lupinus perennis",30)
 #lets look at some model results
 par(mfrow=c(1,1))
 s="Lupinus perennis"
-BRT <- readRDS(file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/BRTs/",s,".BRT",".rds"))
-BRTe <- readRDS(file=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/BRTs/",s,".BRTe",".rds"))
+BRT <- readRDS(file=paste0("Lupine_SDMs/Models/BRTs/",s,".BRT",".rds"))
+BRTe <- readRDS(file=paste0("Lupine_SDMs/Models/BRTs/",s,".BRTe",".rds"))
 
 #relative importance of different variables
 summary(BRT) #this tells you how important each variable was
 summary(BRTe) #this tells you how important each variable was
 
 #individual variable plots
+# sam - what are these actually telling us?
 gbm.plot(BRT, n.plots=11, plot.layout=c(4, 3), write.title = F)
 gbm.plot(BRTe, n.plots=11, plot.layout=c(4, 3), write.title = F)
 
@@ -377,7 +395,7 @@ write.raster<-function(species){
   species="Lupinus perennis"
   
   #read in data
-  data<-readRDS(paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/Predictions/",species,".1k",".rds"))
+  data<-readRDS(paste0("Lupine_SDMs/Models/Predictions/",species,".1k",".rds"))
   class(data)
   
   #make NAs 0
@@ -395,13 +413,11 @@ for (i in 1:ncol(data)){
   
   rast(r)
   
-  writeRaster(rast(r),filename=paste0("C:/Users/andre/OneDrive - McGill University/Borders_WG/SDM Tutorial/Lupine SDMs/Models/Projections/",species,".",colnames(data)[i],".1k",".tiff"),overwrite=T)
+  writeRaster(rast(r),filename=paste0("Lupine_SDMs/Models/Predictions/",species,".",colnames(data)[i],".1k",".tiff"),overwrite=T) 
   
 }
   
 }
-
-
-
+write.raster("Lupinus perennis")
 
 
