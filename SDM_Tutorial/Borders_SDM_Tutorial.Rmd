@@ -1,6 +1,6 @@
 ---
 title: "Borders_SDM_Tutorial"
-author: "Isaac Eckert & Sam Straus"
+author: "Isaac Eckert"
 date: "11/11/2022"
 output: html_document
 ---
@@ -20,14 +20,14 @@ library(mgcv) # mixed GAM computation vehicle
 library(terra) # spatial analysis with vector or raster data
 library(beepr) # play notification sound
 library(RColorBrewer) # color palette
-library(readr)
+library(readr) # reading in files
 ```
 
 ### Read and clean data
 
 Read in raster outline of study area using the `raster` function. Check the coordinate reference system using the `crs` function.
 
-```{r read_plot, echo = FALSE, results = "hide", warning = FALSE}
+```{r read_plot, echo = TRUE, results = "hide", warning = FALSE}
 getwd()
 canusa <- raster("data/USCanadaOutline.tif")
 plot(canusa)
