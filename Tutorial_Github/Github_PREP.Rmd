@@ -9,7 +9,7 @@ output: html_document
 
 There are several options for installing git on your own computer. Github has an installation guide on their website, and this guide has some helpful additional instructions.
 
-Many (but not all!) of the options for installation are command line based, which can be intimidating if you're not used to it. If you encounter any issues installing git, please attend Gracielle's office hours on Thursday, Sept 8th, or contact a postdoc or TA.
+Many (but not all!) of the options for installation are command line based, which can be intimidating if you're not used to it. If you encounter any issues installing git, please contact Sam Straus at samantha.straus@mcgill.ca.
 
 ### Configure your Github credentials
 
