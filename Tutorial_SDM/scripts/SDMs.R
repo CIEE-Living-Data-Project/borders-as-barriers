@@ -137,8 +137,7 @@ all.preds.no.effort <- envval[,c(1:5,7:8,10:13)] #effort and footprint removed
 #grids sample effort fixed at max
 all.preds.effort <- envval[,1:13]
 
-# Future climate data ------------------------------
-
+#Future climate data 
 #We can also add future climate data to make predictions!
 #Lets use RCP 4.5 for 2080
 future.climate.preds<-stack(c("data/EnvUsCan_rcp45_2080_MAP.tif",
