@@ -1,0 +1,11 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/971267/66496643d4a243c0a99dd9ce2370fa3f
+bundleId: https://api.rpubs.com/api/v1/document/971267/66496643d4a243c0a99dd9ce2370fa3f
+url: http://rpubs.com/nicoleamoore/971267
+when: 1668596622.40501
+lastSyncTime: 1668596622.40503
