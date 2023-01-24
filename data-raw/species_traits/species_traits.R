@@ -24,3 +24,35 @@ species_traits2 <- species_traits2 %>%
   select(scientific_name.x, dispersal_km, source_dispersal, mean.hra.m2, source_hra, Mass_kg, Mass_source)
 
 write.csv(species_traits2, "data-raw/species_traits/species_traits.csv")
+
+
+####### Taxize #######
+library(taxize)
+species_final <- read.csv("data-raw/species_traits/specieslist_afterremoval.csv")
+
+
+## create a list of unique binomials
+species.list <- species_final %>% 
+  select(scientific_name)
+
+## search for upstream taxonomy
+species.tax <- classification(unlist(species.list), db = "itis")
+
+## convert this into a useable data format (from a nested list to a tibble)
+species.tax <- species.tax %>% 
+  rbind() %>% ## bind_rows() doesn't work because the output is not a typical list...
+  tibble() %>% 
+  ## drop database 'id' column
+  ## keep 'query' column for indexing while pivoting below
+  select(-id) %>% 
+  ## we only want the 'traditional' taxonomic levels (i.e., KPCOFGP)
+  filter(rank %in% c("class", "order", 
+                     "family", "genus", "species")) %>%
+  pivot_wider(., id_cols = "query", names_from = "rank", values_from = "name") %>% 
+  ## drop the 'query' column (same as 'species')
+  select(-query)
+
+species.tax
+
+
+species_final_tax <- left_join(species_final, species.tax, by = ("scientific_name" = "species"))
