@@ -45,4 +45,21 @@ dd_tofill = left_join(sp, dd_oursp)
 ## write:
 write.csv(dd_tofill, "data-raw/species_traits/dispersal-distance-data_unsearched.csv", row.names = F)
 
+## visualize
+dd = dd_tofill
 
+dd$DispersalDistanceKm = ifelse(dd$Unit == "m", dd$DispersalDistance/1000, dd$DispersalDistance)
+
+dd %>%
+  filter(!is.na(DispersalDistanceKm)) %>%
+  ggplot(aes(x = DispersalDistanceKm, fill = class)) + geom_histogram() + scale_x_log10()
+
+dd %>%
+  filter(!is.na(DispersalDistanceKm)) %>%
+  ggplot(aes(y = ObservationTypeGeneral, fill = class)) + geom_bar() 
+
+## within movement studies, what kind of data?
+dd %>%
+  filter(!is.na(DispersalDistanceKm)) %>%
+  filter(ObservationTypeGeneral == "movement study") %>%
+  ggplot(aes(y = ObservationTypeSpecific, fill = class)) + geom_bar() 
