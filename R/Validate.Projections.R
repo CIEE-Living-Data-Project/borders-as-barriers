@@ -202,4 +202,20 @@ save.clip<-function(species,clip.distance,folder.path){
 save.clip("Marmota olympus",100,"/Users/isaaceckert/Desktop/Clipped Models/")
 
 
+#### PLOT IUCN POLYGON (NO BUFFER) FOR A SPECIES ######
+library(ggplot2)
+library("rnaturalearth")
+library("rnaturalearthdata")
+
+plot_iucn <- function(species) {
+  sp = all.polys[which(all.polys$binomial == species),]
+  
+  world <- ne_countries(scale = "medium", returnclass = "sf")
+  class(world)
+  
+  ggplot() + geom_sf(data = world) + geom_sf(data = sp, fill = "red") +
+    coord_sf(xlim = c(-150, -50), ylim = c(10, 88), expand = FALSE)
+}
+
+plot_iucn("Marmota olympus")
 
