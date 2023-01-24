@@ -58,6 +58,6 @@ species.tax
 species_final_tax <- species_final %>% 
   select(scientific_name) %>% 
   rename(species = scientific_name) %>% 
-  right_join(., species.tax, by = "species")
+  left_join(., species.tax, by = "species")
 
 write_csv(species_final_tax, file = "data-raw/species_traits/species_taxized.csv")
