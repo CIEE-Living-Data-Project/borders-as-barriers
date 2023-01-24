@@ -200,7 +200,8 @@ panth1_sub = panth1_ourspp %>%
          Units = "mm",
          Field = "AdultHeadBodyLen_mm", 
          Code = "MeanBodyLength")%>%
-  filter(!is.na(BodySize))
+  filter(!is.na(BodySize)) %>%
+  filter(BodySize != "-999")
 
 ## how many? 
 length(unique(panth1_sub$scientificName))
@@ -222,7 +223,7 @@ all_bs <- rbind(bio_sub, amph_sub) %>%
   rbind(., avo_sub) %>%
   rbind(., panth1_sub)
 
-length(unique(all_bs$scientificName)) ## 123 species
+length(unique(all_bs$scientificName)) ## 111 species
 
 ## write out: 
 write.csv(all_bs, "data-processed/body-size-compilation.csv", row.names = FALSE)
