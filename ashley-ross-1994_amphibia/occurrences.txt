@@ -1,0 +1,3 @@
+occurrenceID	taxonID	LifeStage
+Caudata	Caudata	http://www.ebi.ac.uk/efo/EFO_0001272
+Anura	Anura	http://www.ebi.ac.uk/efo/EFO_0001272
