@@ -235,13 +235,6 @@ for (i in 1:length(species)) {
   rm(s,dat,pts.grd,bin,bin.pts.t)
 }
 
-
-
-
-
-#stopped here for now!
-
-
 #clip all points outside of breeding IUCN range for birds ONLY
 library(sf)
 library(sp)
