@@ -215,13 +215,68 @@ panth2$X13.1_AdultHeadBodyLen_mm
 panth2_ourspp <- panth2[which(panth2$MSW05_Binomial %in% sp$scientificName),]
 ## none
 
+#-------------------
+# Amphibian database
+#-------------------
+anura <- read.csv("data-raw/species_traits/amphibian database/anura.csv")
+head(anura)
+anura$SVL
+
+## search for our species
+anura_ourspp <- anura[which(anura$Species %in% sp$scientificName),]
+
+anura_ourspp <- anura_ourspp %>%
+  select(Species, SVL) %>%
+  distinct()
+
+anura_sub = anura_ourspp %>%
+  rename("BodySize" = SVL,
+         "scientificName" = Species) %>%
+  mutate(BodySizeSource = "Amphibian database", 
+         Units = "mm",
+         Field = "SVL", 
+         Code = "SnoutVentLength")%>%
+  filter(!is.na(BodySize)) 
+
+## how many? 
+length(unique(anura_sub$scientificName))
+## 3 species 
+
+caudata <- read.csv("data-raw/species_traits/amphibian database/caudata.csv")
+head(caudata)
+caudata$SVL
+
+## search for our species
+caudata_ourspp <- caudata[which(caudata$Species %in% sp$scientificName),]
+
+caudata_ourspp <- caudata_ourspp %>%
+  select(Species, SVL) %>%
+  distinct()
+
+caudata_sub = caudata_ourspp %>%
+  rename("BodySize" = SVL,
+         "scientificName" = Species) %>%
+  mutate(BodySizeSource = "Amphibian database", 
+         Units = "mm",
+         Field = "SVL", 
+         Code = "SnoutVentLength")%>%
+  filter(!is.na(BodySize)) 
+
+## how many? 
+length(unique(caudata_sub$scientificName))
+## 2 species 
+
+
+
 
 #### combine them all
 all_bs <- rbind(bio_sub, amph_sub) %>%
   rbind(., gard_sub) %>%
   rbind(., stor_sub) %>%
   rbind(., avo_sub) %>%
-  rbind(., panth1_sub)
+  rbind(., panth1_sub) %>%
+  rbind(., anura_sub) %>%
+  rbind(., caudata_sub)
 
 length(unique(all_bs$scientificName)) ## 111 species
 
