@@ -1,5 +1,0 @@
-measurementID	occurrenceID	measurementOfTaxon	parentMeasurementID	measurementType	measurementValue	measurementRemarks	bibliographicCitation	source	referenceID
-1	Caudata	TRUE		http://purl.obolibrary.org/obo/GO_0040011	https://www.wikidata.org/entity/Q21907045	symmetrical gaits, diagonally opposite limbs move together	M Ashley-Ross. 1994. HINDLIMB KINEMATICS DURING TERRESTRIAL LOCOMOTION IN A SALAMANDER (DICAMPTODON TENEBROSUS). Journal of Experimental Biology 1994 193: 255-283;	http://jeb.biologists.org/content/193/1/255.abstract	Duellman
-2			1	https://eol.org/schema/terms/starts_at	7518				
-3	Anura	TRUE		http://purl.obolibrary.org/obo/GO_0040011	http://purl.obolibrary.org/obo/NBO_0000370		M Ashley-Ross. 1994. HINDLIMB KINEMATICS DURING TERRESTRIAL LOCOMOTION IN A SALAMANDER (DICAMPTODON TENEBROSUS). Journal of Experimental Biology 1994 193: 255-283;	http://jeb.biologists.org/content/193/1/255.abstract	Duellman
-4			3	https://eol.org/schema/terms/starts_at	1553				
