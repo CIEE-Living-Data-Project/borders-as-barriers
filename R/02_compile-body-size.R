@@ -225,8 +225,13 @@ all_bs <- rbind(bio_sub, amph_sub) %>%
 
 length(unique(all_bs$scientificName)) ## 111 species
 
+## add empty rows for species with missing body size
+no_bs <- sp$scientificName[which(!sp$scientificName %in% all_bs$scientificName)]
+
+bs_tofill = left_join(sp, all_bs)
+
 ## write out: 
-write.csv(all_bs, "data-processed/body-size-compilation.csv", row.names = FALSE)
+write.csv(bs_tofill, "data-processed/body-size-compilation.csv", row.names = FALSE)
 
 
 
