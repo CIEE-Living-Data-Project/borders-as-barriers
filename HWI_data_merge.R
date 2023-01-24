@@ -13,7 +13,7 @@ HWI <- read.csv("data-raw/species_traits/HWI_index/HWI_dataset.csv")
 
 both <- merge(species, HWI, by.x="scientific_name", by.y="Species.name")
 
-# export as csv
+# export as csv  
 write.csv(both, "data-raw/species_traits/aves_HWI.csv")
 
 
