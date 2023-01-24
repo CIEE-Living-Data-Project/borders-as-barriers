@@ -7,22 +7,22 @@ library(sf)
 library(terra)
 
 #gridded base
-canusa <- raster("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Spatial Data/Rasters/North America/Layers for SDMs/USCanadaOutline.tif")
+canusa <- raster("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Documents/Spatial Datasets/Rasters/North America/Layers for SDMs/USCanadaOutline.tif")
 
 #only projectv to 1000km buffer
-buffer<-vect("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Spatial Data/Vectors/North America/Border Buffer/Border Shapefiles/Buffers/1000KM.Buffer.shp")
+buffer<-vect("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Documents/Spatial Datasets/Vectors/North America/Border Buffer/Border Shapefiles/Buffers/1000KM.Buffer.shp")
 buffer<-project((buffer),rast(canusa))
 buffer.rast<-terra::rasterize((buffer),rast(canusa))
 plot(buffer.rast)
 
 #load border line to add to plots
-border<-vect("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Spatial Data/Vectors/North America/Border Buffer/Border Shapefiles/Canada_and_US_Border/Canada_and_US_Border.shp")
+border<-vect("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Documents/Spatial Datasets/Vectors/North America/Border Buffer/Border Shapefiles/Canada_and_US_Border/Canada_and_US_Border.shp")
 border<-project(border,rast(canusa))
 
 #read in projections
-species="Carphophis amoenus"
+species="Marmota olympus"
 
-data<-readRDS(paste0("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Species Distribution Models/Border Species/Clipped Projections 100km/",species,".1k",".rds"))
+data<-readRDS(paste0("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Species Distribution Models/Border Species/Clipped Projections 0km/",species,".1k",".rds"))
 head(data)
 
 #make NAs 0
@@ -46,7 +46,7 @@ plot(r,col=c("grey90","forestgreen"),axes=F,box=F,axis.args=arg,legend=F)
 plot(border,add=T)
 
 #set random dispersal limit
-dispersal.rate=0.5 #km/year
+dispersal.rate=1 #km/year
 max.dispersal=dispersal.rate*60 #since we are talking about 2020-2080
 
 #set all 0 to NA

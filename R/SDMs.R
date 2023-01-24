@@ -344,30 +344,30 @@ all.polys<-readRDS("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUnive
 length(unique(all.polys$binomial)) #143!!!
 
 #load rasters
-canusa <- raster("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Spatial Data/Rasters/North America/Layers for SDMs/USCanadaOutline.tif")
-buffer<-vect("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Spatial Data/Vectors/North America/Border Buffer/Border Shapefiles/Buffers/1000KM.Buffer.shp")
+canusa <- raster("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Documents/Spatial Datasets/Rasters/North America/Layers for SDMs/USCanadaOutline.tif")
+buffer<-vect("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Documents/Spatial Datasets/Vectors/North America/Border Buffer/Border Shapefiles/Buffers/1000KM.Buffer.shp")
 buffer<-project((buffer),rast(canusa))
 buffer.rast<-terra::rasterize((buffer),rast(canusa))
 plot(buffer.rast)
 
+all.polys$value=1
+
 #clip models (only current distributions)
-for (i in 1:length(species)){
+for (i in 55:length(species)){
   sp=species[i]
   
   if (sp %in% all.polys$binomial){
-    
+    print(paste(sp,"IN POLYGONS"))
     #rasterize poly to buffer zone with projection
     sp.poly<-vect(all.polys[which(all.polys$binomial==sp),])
     sp.poly<-project(sp.poly,buffer.rast)
     
     #buffer
-    sp.poly.buffer<-buffer(sp.poly,width=500000)
-    #sp.poly.buffer<-sp.poly
-    
-    
+    #sp.poly.buffer<-buffer(sp.poly,width=100000)
+    sp.poly.buffer<-sp.poly
+
     #rasterize
-    poly.rast<-rasterize(sp.poly.buffer,buffer.rast)
-    plot(poly.rast)
+    poly.rast<-rasterize(sp.poly.buffer,buffer.rast,value="value")
     
     #make some cells NA
     poly.rast[is.na(buffer.rast)]<-NA
@@ -383,11 +383,12 @@ for (i in 1:length(species)){
     data[which(vals==1),c(1,3)]<-0
       
     #save
-    saveRDS(data,(paste0("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Species Distribution Models/Border Species/Clipped Projections 500km/",sp,".1k",".rds")))
+    saveRDS(data,(paste0("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Species Distribution Models/Border Species/Clipped Projections 0km/",sp,".1k",".rds")))
       
  
     }    
-  else {
+  else {    print(paste(sp,"NOT IN POLYGONS"))
+
     #rasterize poly to buffer zone with projection
     syn=missing.sp$Species[which(missing.sp$Syn==sp)]
     sp%in%all.polys$binomial
@@ -395,11 +396,11 @@ for (i in 1:length(species)){
     sp.poly<-project(sp.poly,buffer.rast)
     
     #buffer
-    sp.poly.buffer<-buffer(sp.poly,width=500000)
-    #sp.poly.buffer<-sp.poly
+    #sp.poly.buffer<-buffer(sp.poly,width=100000)
+    sp.poly.buffer<-sp.poly
     
     #rasterize
-    poly.rast<-rasterize(sp.poly.buffer,buffer.rast)
+    poly.rast<-rasterize(sp.poly.buffer,buffer.rast,value="value")
     
     #make some cells NA
     poly.rast[is.na(buffer.rast)]<-NA
@@ -415,18 +416,14 @@ for (i in 1:length(species)){
     data[which(vals==1),c(1,3)]<-0
     
     #save
-    saveRDS(data,(paste0("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Species Distribution Models/Border Species/Clipped Projections 500km/",sp,".1k",".rds")))
-    
-
+    saveRDS(data,(paste0("/Users/isaaceckert/Library/CloudStorage/OneDrive-McGillUniversity/Species Distribution Models/Border Species/Clipped Projections 0km/",sp,".1k",".rds")))
     
   }  
     
-  
   print(paste("DONE:",i,"out of",length(species)))
+  remove(i,sp,sp.poly,poly.rast,sp.poly.buffer,vals,data)
   }
   
   
-  
-
-
+which(species=="Marmota olympus")
 
