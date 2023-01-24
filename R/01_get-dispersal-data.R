@@ -27,8 +27,22 @@ write.csv(sp, "data-processed/initial-species-list_taxonomy.csv", row.names = FA
 ## read in Nikki's super secret dispersal database
 dd <- read.csv("data-raw/species_traits/dispersal-distance-collated_ALL.csv")
 
-## filter to species in our initial species list
+## get rid of some columns 
+dd <- select(dd, -c(reported_name, reported_name_fixed))
 
+## filter to species in our initial species list
 dd_oursp <- dd %>%
-  filter()
+  filter(scientificName %in% sp$scientificName)
+
+## how many species with dispersal observations?
+length(unique(dd_oursp$scientificName)) ## 27
+
+## attach empty lines for species with no dispersal data 
+no_dd <- sp$scientificName[which(!sp$scientificName %in% dd_oursp$scientificName)]
+
+dd_tofill = left_join(sp, dd_oursp)
+
+## write:
+write.csv(dd_tofill, "data-raw/species_traits/dispersal-distance-data_unsearched.csv", row.names = F)
+
 
