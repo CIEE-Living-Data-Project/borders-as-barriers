@@ -37,7 +37,8 @@ plot.projection<-function(species,clip.distance){
   r.unclipped <- raster(buffer.rast)
   r.unclipped[(which(values(buffer.rast)==1))] <- data[,"BRT.Current"]
   r.unclipped[(is.na(canusa))]<-NA
-  r.unclipped<-trim(r.unclipped)
+  r.unclipped<-raster::crop(r.unclipped,extent(-2811928, 2941932, 5033391, 7658694))
+  r.unclipped<-raster::trim(r.unclipped)
   plot(r.unclipped,axes=F,box=F,legend=F,main="UNCLIPPED")
   plot(border,add=T,lwd=0.5)
   
@@ -71,6 +72,7 @@ plot.projection<-function(species,clip.distance){
     r.clipped <- raster(buffer.rast)
     r.clipped[(which(values(buffer.rast)==1))] <- data.clip[,"BRT.Current"]
     r.clipped[(is.na(canusa))]<-NA
+    r.clipped<-raster::crop(r.clipped,extent(-2811928, 2941932, 5033391, 7658694))
     r.clipped<-trim(r.clipped)
     plot(r.clipped,axes=F,box=F,axis.args=arg,legend=F,main="CLIPPED")
     plot(border,add=T,lwd=0.5)
@@ -106,6 +108,7 @@ plot.projection<-function(species,clip.distance){
     r.clipped <- raster(buffer.rast)
     r.clipped[(which(values(buffer.rast)==1))] <- data.clip[,"BRT.Current"]
     r.clipped[(is.na(canusa))]<-NA
+    r.clipped<-raster::crop(r.clipped,extent(-2811928, 2941932, 5033391, 7658694))
     r.clipped<-trim(r.clipped)
     plot(r.clipped,axes=F,box=F,axis.args=arg,legend=F,main="CLIPPED")
     plot(border,add=T,lwd=0.5)
