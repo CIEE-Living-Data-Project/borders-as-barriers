@@ -1,6 +1,8 @@
 #plot projection and choose best clipping distance 
 library(terra)
 library(raster)
+library(sp)
+library(sf)
 
 #gridded base
 canusa <- raster("Data/Base Layers/USCanadaOutline.tif")
@@ -22,8 +24,7 @@ all.polys<-readRDS("Data/Species Polygons/all.polys.RDS")
 
 #plotting function with clip option
 plot.projection<-function(species,clip.distance){
-  species="Marmota olympus"
-  
+
   data<-readRDS(paste0("Data/Projections/",species,".1k",".rds"))
 
   #make NAs 0
@@ -32,15 +33,12 @@ plot.projection<-function(species,clip.distance){
   #convert back into probabilities (0-1)
   data<-round(apply(data,2,function (x) x/100),2)
   
-  #set par
-  par(mfrow=c(2,1))
-  
   #plot unclipped
   r.unclipped <- raster(buffer.rast)
   r.unclipped[(which(values(buffer.rast)==1))] <- data[,"BRT.Current"]
   r.unclipped[(is.na(canusa))]<-NA
   r.unclipped<-trim(r.unclipped)
-  plot(r.unclipped,axes=F,box=F,axis.args=arg,legend=F,main="UNCLIPPED")
+  plot(r.unclipped,axes=F,box=F,legend=F,main="UNCLIPPED")
   plot(border,add=T,lwd=0.5)
   
   #plot clipped
@@ -60,7 +58,7 @@ plot.projection<-function(species,clip.distance){
     #make some cells NA
     poly.rast[is.na(buffer.rast)]<-NA
     buffer.rast.int<-buffer.rast
-    buffer.rast.int[(which(values(poly.rast)==1))]<-2
+    buffer.rast.int[(poly.rast==1)]<-2
     
     vals=values(buffer.rast.int)
     vals<-vals[complete.cases(vals)]
@@ -77,8 +75,7 @@ plot.projection<-function(species,clip.distance){
     plot(r.clipped,axes=F,box=F,axis.args=arg,legend=F,main="CLIPPED")
     plot(border,add=T,lwd=0.5)
     
-  }    
-  else {    print(paste(sp,"NAME NOT IN POLYGONS"))
+  } else {    print(paste(sp,"NAME NOT IN POLYGONS"))
     
     #rasterize poly to buffer zone with projection
     syn=missing.sp$Species[which(missing.sp$Syn==species)]
@@ -94,7 +91,7 @@ plot.projection<-function(species,clip.distance){
     #make some cells NA
     poly.rast[is.na(buffer.rast)]<-NA
     buffer.rast.int<-buffer.rast
-    buffer.rast.int[(which(values(poly.rast)==1))]<-2
+    buffer.rast.int[(poly.rast==1)]<-2
     
     vals=values(buffer.rast.int)
     vals<-vals[complete.cases(vals)]
@@ -114,8 +111,6 @@ plot.projection<-function(species,clip.distance){
     plot(border,add=T,lwd=0.5)
       
   }  
-  
-  
   
   }
 plot.projection("Marmota olympus",100)
@@ -148,7 +143,7 @@ save.clip<-function(species,clip.distance,folder.path){
     #make some cells NA
     poly.rast[is.na(buffer.rast)]<-NA
     buffer.rast.int<-buffer.rast
-    buffer.rast.int[(which(values(poly.rast)==1))]<-2
+    buffer.rast.int[(poly.rast==1)]<-2
     
     vals=values(buffer.rast.int)
     vals<-vals[complete.cases(vals)]
@@ -178,7 +173,7 @@ save.clip<-function(species,clip.distance,folder.path){
     #make some cells NA
     poly.rast[is.na(buffer.rast)]<-NA
     buffer.rast.int<-buffer.rast
-    buffer.rast.int[(which(values(poly.rast)==1))]<-2
+    buffer.rast.int[(poly.rast==1)]<-2
     
     vals=values(buffer.rast.int)
     vals<-vals[complete.cases(vals)]
