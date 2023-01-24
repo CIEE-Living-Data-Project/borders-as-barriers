@@ -22,6 +22,10 @@ missing.sp<-read.csv("Data/Species Names/missing.species.csv",row.names = 1)
 #polygons
 all.polys<-readRDS("Data/Species Polygons/all.polys.RDS")
 
+## write list of initial species
+write.csv(unique(all.polys$binomial), row.names = FALSE, 
+          "data-processed/initial-species-list.csv")
+
 #plotting function with clip option
 plot.projection<-function(species,clip.distance){
 
@@ -217,5 +221,9 @@ plot_iucn <- function(species) {
     coord_sf(xlim = c(-150, -50), ylim = c(10, 88), expand = FALSE)
 }
 
-plot_iucn("Marmota olympus")
+
+species = "Nyctanassa violacea"
+plot_iucn(species)
+plot.projection(species, 0)
+
 
