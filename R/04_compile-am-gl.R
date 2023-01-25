@@ -221,10 +221,6 @@ length(unique(amni_sub$scientificName))
 amni_sub <- select(amni_sub, cols_to_keep)
 
 
-
-
-
-
 #### combine them all
 all_amgl <- rbind(panth1_sub, amph_sub) %>%
   rbind(., mei_sub) %>%
