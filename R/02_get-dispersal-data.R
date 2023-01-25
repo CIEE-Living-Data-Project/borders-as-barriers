@@ -45,6 +45,17 @@ dd_tofill = left_join(sp, dd_oursp)
 ## write:
 write.csv(dd_tofill, "data-raw/species_traits/dispersal-distance-data_unsearched.csv", row.names = F)
 
+
+## add in sam's data
+read.csv()
+
+
+
+
+
+
+
+
 ## visualize
 dd = dd_tofill
 dd$DispersalDistance <- as.numeric(as.character(dd$DispersalDistance))
@@ -64,4 +75,5 @@ dd %>%
   filter(!is.na(DispersalDistanceKm)) %>%
   filter(ObservationTypeGeneral == "movement study") %>%
   ggplot(aes(y = ObservationTypeSpecific, fill = class)) + geom_bar() 
+
 

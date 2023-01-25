@@ -207,6 +207,8 @@ panth1_sub = panth1_ourspp %>%
 length(unique(panth1_sub$scientificName))
 ## 18 species 
 
+panth1_sub <- select(panth1_sub, cols_to_keep)
+
 panth2 <- read.delim('data-raw/species_traits/Pantheria/ECOL_90_184/PanTHERIA_1-0_WR93_Aug2008.txt')
 head(panth2)
 panth2$X13.1_AdultHeadBodyLen_mm
@@ -242,6 +244,8 @@ anura_sub = anura_ourspp %>%
 length(unique(anura_sub$scientificName))
 ## 3 species 
 
+anura_sub <- select(anura_sub, cols_to_keep)
+
 caudata <- read.csv("data-raw/species_traits/amphibian database/caudata.csv")
 head(caudata)
 caudata$SVL
@@ -266,6 +270,42 @@ caudata_sub = caudata_ourspp %>%
 length(unique(caudata_sub$scientificName))
 ## 2 species 
 
+caudata_sub <- select(caudata_sub, cols_to_keep)
+
+#-----------------
+# Amniota
+#------------------
+amniota <- read.csv("data-raw/species_traits/amniota/ECOL_96_269/Data_Files/Amniote_Database_Aug_2015.csv")
+head(amniota)
+amniota$male_svl_cm
+amniota$female_svl_cm
+amniota$adult_svl_cm
+
+amniota$genus_species <- paste(amniota$genus, amniota$species, sep = " ")
+
+## search for our species
+amniota_oursp <- amniota[which(amniota$genus_species %in% sp$scientificName),]
+
+amniota <- amniota %>%
+  select(genus_species, female_svl_cm, male_svl_cm, adult_svl_cm) %>%
+  distinct()
+
+amni_sub = amniota_oursp %>%
+  gather(key = "Field", value = "BodySize", 
+         c(female_svl_cm, male_svl_cm, adult_svl_cm)) %>%
+  rename("scientificName" = genus_species) %>%
+  mutate(BodySizeSource = "Amniota", 
+         Units = "cm",
+         Code = "SnoutVentLength")%>%
+  filter(!is.na(BodySize))%>%
+  filter(BodySize != "-999")
+
+## how many? 
+length(unique(amni_sub$scientificName))
+## 41 species 
+
+amni_sub <- select(amni_sub, cols_to_keep)
+
 
 #### combine them all
 all_bs <- rbind(bio_sub, amph_sub) %>%
@@ -274,9 +314,10 @@ all_bs <- rbind(bio_sub, amph_sub) %>%
   rbind(., avo_sub) %>%
   rbind(., panth1_sub) %>%
   rbind(., anura_sub) %>%
-  rbind(., caudata_sub)
+  rbind(., caudata_sub) %>%
+  rbind(., amni_sub)
 
-length(unique(all_bs$scientificName)) ## 88 species
+length(unique(all_bs$scientificName)) ## 95 species
 
 ## add empty rows for species with missing body size
 no_bs <- sp$scientificName[which(!sp$scientificName %in% all_bs$scientificName)]
@@ -285,12 +326,3 @@ bs_tofill = left_join(sp, all_bs)
 
 ## write out: 
 write.csv(bs_tofill, "data-processed/body-size-compilation.csv", row.names = FALSE)
-
-
-## next: compile age at maturity/generation length 
-
-
-
-
-
-       
