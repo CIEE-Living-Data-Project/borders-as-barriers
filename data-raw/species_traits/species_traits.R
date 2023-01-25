@@ -60,3 +60,17 @@ species_final_tax <- species_final %>%
   left_join(., species.tax, by = "species")
 
 write_csv(species_final_tax, file = "data-processed/species_final_taxized.csv")
+
+
+#### compare with Jenkins db #####
+
+jenkins <- read.csv("data-raw/species_traits/Jenkins_2007_data.csv")
+
+jenkins_reps <- jenkins %>% filter(group == "Reptile") %>% 
+  rename(species = Scientific.Name, dispersal_meters = Max..Indiv..Dispersal.Distance..m.)
+
+species_tax_space_rem <- species_final_tax %>% 
+  mutate(species = str_replace(species, " ", ""))
+
+jenkins_tax <- left_join(species_tax_space_rem, jenkins_reps, by = "species") %>% 
+  filter(!is.na(dispersal_meters))
