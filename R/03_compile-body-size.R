@@ -3,7 +3,7 @@ library(tidyverse)
 library(readxl)
 
 ## read in taxized species list 
-sp <- read.csv("data-processed/initial-species-list_taxonomy.csv")
+sp <- read.csv("data-processed/final-species-list_taxonomy.csv")
 
 cols_to_keep <- c("scientificName", "BodySize", "Units", "Field", "Code", "BodySizeSource")
 
@@ -32,7 +32,7 @@ amph_sub = amph_oursp %>%
 
 ## how many? 
 length(unique(amph_sub$scientificName))
-## 30 species 
+## 25 species 
 
 amph_sub <- select(amph_sub, cols_to_keep)
 
@@ -60,7 +60,7 @@ gard_sub = gard_oursp %>%
 
 ## how many? 
 length(unique(gard_sub$scientificName))
-## 25 species 
+## 23 species 
 
 gard_sub <- select(gard_sub, cols_to_keep)
 
@@ -89,7 +89,7 @@ stor_sub = stor_oursp %>%
 
 ## how many? 
 length(unique(stor_sub$scientificName))
-## 2 species 
+## 0 species 
 
 stor_sub <- select(stor_sub, cols_to_keep)
 
@@ -133,7 +133,7 @@ avo_sub = avo_oursp %>%
 
 ## how many? 
 length(unique(avo_sub$scientificName))
-## 38 species 
+## 22 species 
 
 avo_sub <- select(avo_sub, cols_to_keep)
 
@@ -175,7 +175,7 @@ bio_sub = bio_ourspp %>%
 
 ## how many? 
 length(unique(bio_sub$scientificName))
-## 1 species 
+## 0 species 
 
 bio_sub <- select(bio_sub, cols_to_keep)
 
@@ -205,7 +205,7 @@ panth1_sub = panth1_ourspp %>%
 
 ## how many? 
 length(unique(panth1_sub$scientificName))
-## 32 species 
+## 18 species 
 
 panth2 <- read.delim('data-raw/species_traits/Pantheria/ECOL_90_184/PanTHERIA_1-0_WR93_Aug2008.txt')
 head(panth2)
@@ -267,8 +267,6 @@ length(unique(caudata_sub$scientificName))
 ## 2 species 
 
 
-
-
 #### combine them all
 all_bs <- rbind(bio_sub, amph_sub) %>%
   rbind(., gard_sub) %>%
@@ -278,7 +276,7 @@ all_bs <- rbind(bio_sub, amph_sub) %>%
   rbind(., anura_sub) %>%
   rbind(., caudata_sub)
 
-length(unique(all_bs$scientificName)) ## 111 species
+length(unique(all_bs$scientificName)) ## 88 species
 
 ## add empty rows for species with missing body size
 no_bs <- sp$scientificName[which(!sp$scientificName %in% all_bs$scientificName)]
@@ -287,6 +285,11 @@ bs_tofill = left_join(sp, all_bs)
 
 ## write out: 
 write.csv(bs_tofill, "data-processed/body-size-compilation.csv", row.names = FALSE)
+
+
+## next: compile age at maturity/generation length 
+
+
 
 
 

@@ -6,23 +6,23 @@ library(traitdataform)
 library(data.table)
 source("R/harmonize.R")
 
-## read in list of 143 species 
-sp <- read.csv("data-processed/initial-species-list.csv")
+## read in list of final species 
+sp <- read.csv("data-processed/final-species-list.csv")
 
 ## taxize our species list 
-sp_harm <- harmonize(sp$x)
+sp_harm <- harmonize(sp$scientific_name)
 
 notfound <- filter(sp_harm, is.na(db_code)) ## all species found
 
 ## rename columns 
 sp <- sp %>%
-  rename("initial_name" = x) 
+  rename("initial_name" = scientific_name) 
 
 sp <- left_join(sp, sp_harm, by = c("initial_name" = "species")) %>%
   unique()
 
 ## write harmonized species list 
-write.csv(sp, "data-processed/initial-species-list_taxonomy.csv", row.names = FALSE)
+write.csv(sp, "data-processed/final-species-list_taxonomy.csv", row.names = FALSE)
 
 ## read in Nikki's super secret dispersal database
 dd <- read.csv("data-raw/species_traits/dispersal-distance-collated_ALL.csv")
@@ -35,7 +35,7 @@ dd_oursp <- dd %>%
   filter(scientificName %in% sp$scientificName)
 
 ## how many species with dispersal observations?
-length(unique(dd_oursp$scientificName)) ## 27
+length(unique(dd_oursp$scientificName)) ## 18
 
 ## attach empty lines for species with no dispersal data 
 no_dd <- sp$scientificName[which(!sp$scientificName %in% dd_oursp$scientificName)]
@@ -47,6 +47,7 @@ write.csv(dd_tofill, "data-raw/species_traits/dispersal-distance-data_unsearched
 
 ## visualize
 dd = dd_tofill
+dd$DispersalDistance <- as.numeric(as.character(dd$DispersalDistance))
 
 dd$DispersalDistanceKm = ifelse(dd$Unit == "m", dd$DispersalDistance/1000, dd$DispersalDistance)
 
@@ -63,3 +64,4 @@ dd %>%
   filter(!is.na(DispersalDistanceKm)) %>%
   filter(ObservationTypeGeneral == "movement study") %>%
   ggplot(aes(y = ObservationTypeSpecific, fill = class)) + geom_bar() 
+
