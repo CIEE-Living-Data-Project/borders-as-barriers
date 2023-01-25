@@ -1,4 +1,10 @@
 species,class,order,family,genus
+Agkistrodon contortrix,Reptilia,Squamata,Viperidae,Agkistrodon
+Ambystoma barbouri,Amphibia,Caudata,Ambystomatidae,Ambystoma
+Ambystoma opacum,Amphibia,Caudata,Ambystomatidae,Ambystoma
+Ammospiza maritima,Aves,Passeriformes,Passerellidae,Ammospiza
+Amphispiza bilineata,Aves,Passeriformes,Passerellidae,Amphispiza
+Anaxyrus woodhousii,Amphibia,Anura,Bufonidae,Anaxyrus
 Arborimus albipes,Mammalia,Rodentia,Cricetidae,Arborimus
 Arborimus longicaudus,Mammalia,Rodentia,Cricetidae,Arborimus
 Artemisiospiza nevadensis,Aves,Passeriformes,Passerellidae,Artemisiospiza
@@ -87,12 +93,10 @@ Sorex merriami,Mammalia,Soricomorpha,Soricidae,Sorex
 Sorex nanus,Mammalia,Soricomorpha,Soricidae,Sorex
 Sorex sonomae,Mammalia,Soricomorpha,Soricidae,Sorex
 Spinus psaltria,Aves,Passeriformes,Fringillidae,Spinus
-Sternula antillarum,Aves,Charadriiformes,Laridae,Sternula
 Sylvilagus transitionalis,Mammalia,Lagomorpha,Leporidae,Sylvilagus
 Sylvilagus audubonii,Mammalia,Lagomorpha,Leporidae,Sylvilagus
 Sylvilagus bachmani,Mammalia,Lagomorpha,Leporidae,Sylvilagus
 Tadarida brasiliensis,Mammalia,Chiroptera,Molossidae,Tadarida
-Thalasseus maximus,Aves,Charadriiformes,Laridae,Thalasseus
 Thomomys idahoensis,Mammalia,Rodentia,Geomyidae,Thomomys
 Thomomys mazama,Mammalia,Rodentia,Geomyidae,Thomomys
 Tyrannus vociferans,Aves,Passeriformes,Tyrannidae,Tyrannus

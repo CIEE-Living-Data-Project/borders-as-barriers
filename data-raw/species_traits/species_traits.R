@@ -28,8 +28,7 @@ write.csv(species_traits2, "data-raw/species_traits/species_traits.csv")
 
 ####### Taxize #######
 library(taxize)
-species_final <- read.csv("data-raw/species_traits/specieslist_afterremoval.csv")
-
+species_final <- read.csv("data-processed/final-species-list.csv")
 
 ## create a list of unique binomials
 species.list <- species_final %>% 
@@ -60,4 +59,4 @@ species_final_tax <- species_final %>%
   rename(species = scientific_name) %>% 
   left_join(., species.tax, by = "species")
 
-write_csv(species_final_tax, file = "data-raw/species_traits/species_taxized.csv")
+write_csv(species_final_tax, file = "data-processed/species_traits/species_taxized.csv")
