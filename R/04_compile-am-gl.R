@@ -1,4 +1,5 @@
 ## script to pull together age at maturity / generation time data 
+## developed by: Nikki Moore
 library(tidyverse)
 library(readxl)
 
@@ -237,4 +238,3 @@ amgl_tofill = left_join(sp, all_amgl)
 
 ## write out: 
 write.csv(amgl_tofill, "data-processed/age-at-maturity-gen-length-compilation.csv", row.names = FALSE)
-
