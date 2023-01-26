@@ -327,3 +327,4 @@ bs_tofill = left_join(sp, all_bs)
 
 ## write out: 
 write.csv(bs_tofill, "data-processed/body-size-compilation.csv", row.names = FALSE)
+

@@ -238,4 +238,3 @@ amgl_tofill = left_join(sp, all_amgl)
 
 ## write out: 
 write.csv(amgl_tofill, "data-processed/age-at-maturity-gen-length-compilation.csv", row.names = FALSE)
-

@@ -391,5 +391,3 @@ bm_tofill = left_join(sp, all_bm)
 
 ## write out: 
 write.csv(bm_tofill, "data-processed/age-at-maturity-gen-length-compilation.csv", row.names = FALSE)
-
-
