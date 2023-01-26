@@ -45,5 +45,13 @@ MigClim.genClust(hsMap = paste(folder, "hsMap", sep = ""),
                  outFile = paste(folder, "out", sep = ""), initFile="")
 
 
-## want one time step - from now until 2060
+## read output script and look at at:
+out1 <- raster(paste(folder, "out1.asc", sep = ""))
+plot(out1)
+
+out2 <- raster(paste(folder, "out2.asc", sep = ""))
+plot(out2)
+
+out5 <- raster(paste(folder, "out5.asc", sep = ""))
+plot(out5)
 
