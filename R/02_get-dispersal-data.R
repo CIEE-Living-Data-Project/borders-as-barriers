@@ -1,4 +1,5 @@
 ## get dispersal observations from existing database 
+## developed by: Nikki Moore
 library(tidyverse)
 library(parallel)
 library(pbapply)

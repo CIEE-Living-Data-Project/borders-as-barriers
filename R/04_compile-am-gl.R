@@ -1,4 +1,5 @@
 ## script to pull together age at maturity / generation time data 
+## developed by: Nikki Moore
 library(tidyverse)
 library(readxl)
 

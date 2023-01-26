@@ -1,4 +1,5 @@
 ## filtering projections to get rid of seabirds and canadian species
+## developed by: Nikki Moore
 library(tidyverse)
 
 ## read in projection validation data 
