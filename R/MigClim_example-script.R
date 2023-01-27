@@ -1,26 +1,44 @@
 ## trying out dispersal functions
-## devtools::install_github("cran/MigClim")
+require(devtools)
+install_version("MigClim", version = "1.6.1", repos = "http://cran.us.r-project.org")
+install_version("adehabitat", version = "1.8.2", repos = "http://cran.us.r-project.org")
+install_version("SDMTools", version = "1.1", repos = "http://cran.us.r-project.org")
+library(SDMTools)
 library(MigClim)
 
-?MigClim.genClust
+?MigClim.migrate
 
 ## Arguments:
-# hsMap
-#  - name of raster file that contains suitability maps for each time step in ASCII grid 
-#  - habitat suitability indicates the suitability of each cell to be colonized as a value between 0-1000
-# barrier
-#  - name of the raster file that contains barriers for each time step in ASCII grid 
-#  - barrier files indicate whether there is a barrier to migration present, either 1 or 0
-# nrClusters
-#  - number of genetic clusters to use 
-# nrIterations
-#  - the number of iterations (ex. time steps)
-# threshold
-#  - number above which a cell is considered suitable 
-# outFile
-#  - name of output file
-# initFile
-#  - name of inpit file
+
+data(MigClim.testData)
+
+### Run MigClim with a data frame type input.
+n <- MigClim.migrate(iniDist = MigClim.testData[,1:3],
+                    hsMap = MigClim.testData[,4:8],
+                    rcThreshold = 500, 
+                    envChgSteps = 5,
+                    dispSteps = 5,
+                    dispKernel = c(1.0,0.4,0.16,0.06,0.03),
+                    barrier = MigClim.testData[,9],
+                    barrierType = "strong", 
+                    iniMatAge = 1, 
+                    propaguleProd = c(0.01,0.08,0.5,0.92),
+                    lddFreq = 0.1, 
+                    lddMinDist = 6, 
+                    lddMaxDist = 15, 
+                    simulName = "MigClimTest", 
+                    replicateNb = 1, 
+                    overWrite = TRUE, 
+                    testMode=FALSE, 
+                    fullOutput=FALSE, 
+                    keepTempFiles=FALSE)
+
+
+
+
+
+
+
 
 ## create name of folder with example data:
 folder = "data-raw/migclim_example_data/MigClim_Example/"
@@ -33,13 +51,14 @@ plot(barrier5)
 
 hsMap1 <- raster(paste(folder, "hsMap1.asc", sep = ""))
 plot(hsMap1)
+plot(hsMap1 > 445) ## visualize threshold 
 hsMap5 <- raster(paste(folder, "hsMap5.asc", sep = ""))
 plot(hsMap5)
 
 ## try running the function
 MigClim.genClust(hsMap = paste(folder, "hsMap", sep = ""),
                  barrier = paste(folder, "barrier", sep = ""), 
-                 nrClusters=4,
+                 nrClusters=1,
                  nrIterations=5, 
                  threshold=445, 
                  outFile = paste(folder, "out", sep = ""), initFile="")

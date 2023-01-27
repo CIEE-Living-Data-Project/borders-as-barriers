@@ -27,6 +27,8 @@ write.csv(sp, "data-processed/final-species-list_taxonomy.csv", row.names = FALS
 
 ## read in Nikki's super secret dispersal database
 dd <- read.csv("data-raw/species_traits/dispersal-distance-collated_ALL.csv")
+dd$DispersalDistance <- as.numeric(as.character(dd$DispersalDistance))
+dd$DispersalDistanceKm = ifelse(dd$Unit == "m", dd$DispersalDistance/1000, dd$DispersalDistance)
 
 ## get rid of some columns 
 dd <- select(dd, -c(reported_name, reported_name_fixed))
@@ -92,16 +94,8 @@ no_dd <- sp$scientificName[which(!sp$scientificName %in% disp_data$scientificNam
 
 dd_tofill = left_join(sp, disp_data)
 
-
-
 ## write:
 write.csv(dd_tofill, "data-raw/species_traits/dispersal-distance-data_unsearched.csv", row.names = F)
-
-
-
-
-
-
 
 
 ## visualize
@@ -112,10 +106,11 @@ dd$DispersalDistanceKm = ifelse(dd$Unit == "m", dd$DispersalDistance/1000, dd$Di
 
 dd %>%
   filter(!is.na(DispersalDistanceKm)) %>%
-  ggplot(aes(x = DispersalDistanceKm, fill = class)) + geom_histogram() + scale_x_log10()
+  ggplot(aes(x = DispersalDistanceKm, fill = order)) + geom_histogram() + scale_x_log10()
 
 dd %>%
   filter(!is.na(DispersalDistanceKm)) %>%
+  View 
   ggplot(aes(y = ObservationTypeGeneral, fill = class)) + geom_bar() 
 
 ## within movement studies, what kind of data?
@@ -123,5 +118,8 @@ dd %>%
   filter(!is.na(DispersalDistanceKm)) %>%
   filter(ObservationTypeGeneral == "movement study") %>%
   ggplot(aes(y = ObservationTypeSpecific, fill = class)) + geom_bar() 
+
+
+
 
 
