@@ -11,7 +11,7 @@ source("R/harmonize.R")
 ##  collate dispersal distance data  ##
 ##-----------------------------------##
 ## read in list of final species 
-sp <- read.csv("data-processed/final-species-list.csv")
+sp <- read.csv("data-processed/final-species-list_updated.csv")
 
 ## taxize our species list 
 sp_harm <- harmonize(sp$scientific_name)
@@ -41,7 +41,7 @@ dd_oursp <- dd %>%
   filter(scientificName %in% sp$scientificName)
 
 ## how many species with dispersal observations?
-length(unique(dd_oursp$scientificName)) ## 18
+length(unique(dd_oursp$scientificName)) ## 44
 
 ## add in sam's data
 sam <- read.csv("data-raw/species_traits/Straus_MovementProfiles_raw.csv")
@@ -51,11 +51,11 @@ sam$binomial <- str_replace_all(sam$scientific_name.x, "\\_", " ")
 
 ## which species are in the final species list?
 sam_fsp <- filter(sam, binomial %in% sp$scientificName)
-length(unique(sam_fsp$binomial)) ## 24 
+length(unique(sam_fsp$binomial)) ## 43 
 
 ## which are species in my database?
 length(which(unique(sam_fsp$binomial) %in% unique(dd_oursp$scientificName)))
-## 14 - so 3 are not 
+## 30 - so 13 are not 
 sam_unique <- filter(sam_fsp, !binomial %in% dd_oursp$scientificName)
 
 ## filter out species with no distance data
@@ -90,7 +90,7 @@ sam_sub <- left_join(sam_sub, select(sp, -initial_name, -genus, -species))
 ## bind with my data 
 disp_data <- rbind(sam_sub, dd_oursp)
 
-length(unique(disp_data$scientificName)) ## 26
+length(unique(disp_data$scientificName)) ## 52
 
 
 ## attach empty lines for species with no dispersal data 
@@ -106,7 +106,7 @@ write.csv(dd_tofill, "data-raw/species_traits/dispersal-distance-data_unsearched
 ##  estimate dispersal potential for species in our data  ##
 ##--------------------------------------------------------##
 ## read in new species list 
-taxa <- read.csv("data-processed/taxa.UPDATED.csv")
+taxa <- sp
 
 ## Assigning species a dispersal distance:
 ## - using the dataset of empirical dispersal estimates we collated, we assigned each species a dispersal distance based on averages calculated by class or order
@@ -164,22 +164,32 @@ dd_reclass <- dd_reclass %>%
                         class)) %>%
   filter(!family %in% c("Cheloniidae", "Dermochelyidae")) ## get rid of sea turtles
 
+taxa <- taxa %>%
+  mutate(order = ifelse(class %in% c("Squamata", "Testudines"),
+                        class, 
+                        order)) %>%
+  mutate(class = ifelse(class %in% c("Squamata", "Testudines"),
+                        "Reptilia", 
+                        class)) 
+
 ## calculate dataframe of class and order level means 
 ## filter out ones with sample size of less than 10
 class_means <- dd_reclass %>%
   group_by(class) %>%
-  summarise(ClassMeanDD = mean(DispersalDistanceKm),
-            ClassMeanN = length(DispersalDistanceKm),
-            ClassSD = sd(DispersalDistanceKm)) %>%
+  filter(!is.na(class)) %>%
   filter(class %in% taxa$class) %>%
+  summarise(ClassMeanDD = mean(DispersalDistanceKm, na.rm = TRUE),
+            ClassMeanN = length(which(!is.na(DispersalDistanceKm))),
+            ClassSD = sd(DispersalDistanceKm, na.rm = TRUE)) %>%
   filter(ClassMeanN >= 10)
   
 order_means <- dd_reclass %>%
   group_by(order) %>%
-  summarise(OrderMeanDD = mean(DispersalDistanceKm),
-            OrderMeanN = length(DispersalDistanceKm),
-            OrderSD = sd(DispersalDistanceKm)) %>%
+  filter(!is.na(order)) %>%
   filter(order %in% taxa$order) %>%
+  summarise(OrderMeanDD = mean(DispersalDistanceKm, na.rm = TRUE),
+            OrderMeanN = length(which(!is.na(DispersalDistanceKm))),
+            OrderSD = sd(DispersalDistanceKm, na.rm = TRUE)) %>%
   filter(OrderMeanN >= 10) 
 
 ## join 
